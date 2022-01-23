@@ -1,5 +1,24 @@
 <script>
   import ProgressBar from "./ProgressBar.svelte";
+
+  const totalSeconds = 20;
+  let secondLeft = totalSeconds;
+  let isRunning = false;
+  $: progress = ((totalSeconds - secondLeft) / totalSeconds) * 100
+
+  function startTimer () {
+    isRunning = true;
+    const timer = setInterval(() => {
+    secondLeft -= 1;
+    if (secondLeft == 0) {
+      clearInterval(timer);
+      isRunning = false;
+      secondLeft = totalSeconds
+    }
+  }, 1000)
+
+  }
+
 </script>
 
 <style>
@@ -11,16 +30,20 @@
     width: 100%;
     margin: 10px 0;
   }
+  .start[disabled] {
+    background-color: rgb(194,194,194);
+    cursor: not-allowed;
+  }
 </style>
 
 
 <div bp="grid">
   <h2 bp="offset-5@md 4@md 12@sm">
-    Seconds Left:
+    Seconds Left: {secondLeft}
   </h2>
 
 </div>
 
-<ProgressBar />
+<ProgressBar progress={progress} />
 
-<button class="start">Start</button>
+<button disabled={isRunning} on:click="{startTimer}" bp="offset-5@md 4@md 12@sm" class="start">Start</button>
